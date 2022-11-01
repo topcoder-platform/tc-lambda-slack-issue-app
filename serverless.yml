@@ -1,0 +1,27 @@
+service: tc-lambda-slack-issue-app
+provider:
+  name: aws
+  stage: ${opt:stage, 'dev'}
+  vpc:
+    securityGroupIds:
+      - ${file(./config/${self:provider.stage}.json):VPC_SECURITY_GROUP_ID_1}
+    subnetIds:
+      - ${file(./config/${self:provider.stage}.json):VPC_SUBNET_ID_1}
+  role: ${file(./config/${self:provider.stage}.json):LAMBDA_ROLE}
+  runtime: nodejs16.x
+  memorySize: 256
+  timeout: 15
+  environment:
+    SLACK_BOT_TOKEN: ${file(./config/${self:provider.stage}.json):SLACK_BOT_TOKEN}
+    SLACK_SIGNING_SECRET: ${file(./config/${self:provider.stage}.json):SLACK_SIGNING_SECRET}
+
+functions:
+  tc-lambda-slack-issue-app:
+    handler: lambda.handler
+    name: ${self:provider.stage}-tc-lambda-slack-issue-app
+    events:
+      - alb:
+          listenerArn: ${file(./config/${self:provider.stage}.json):ALB_ARN}
+          priority: 151
+          conditions:
+            path: /v5/slack-issue-app/slack/events

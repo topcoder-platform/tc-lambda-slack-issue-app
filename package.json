@@ -1,0 +1,11 @@
+{
+  "name": "tc-lambda-slack-issue-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lambda.js",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@slack/bolt": "^3.12.1"
+  }
+}
