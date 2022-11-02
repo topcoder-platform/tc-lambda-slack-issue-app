@@ -14,7 +14,7 @@ const formView = {
   "callback_id": "view_form",
   "title": {
     "type": "plain_text",
-    "text": "Issue Report"
+    "text": "Report an Issue"
   },
   "submit": {
     "type": "plain_text",
@@ -128,6 +128,69 @@ const formView = {
   ]
 }
 
+app.event('app_home_opened', async ({ event, client, logger }) => {
+
+  try {
+    const result = await client.views.publish({
+      "type": "home",
+      "blocks": [
+        {
+          "type": "header",
+          "text": {
+            "type": "plain_text",
+            "text": "Issue Reporting Service"
+          }
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "section",
+          "text": {
+            "type": "plain_text",
+            "text": "Issue Reporting Service is an interactive application for reporting bugs, issues or incidents related to Topcoder products and services."
+          }
+        },
+        {
+          "type": "actions",
+          "elements": [
+            {
+              "type": "button",
+              "text": {
+                "type": "plain_text",
+                "text": "Report an Issue"
+              },
+              "value": "report_an_issue",
+              "style": "primary",
+              "action_id": "report_an_issue"
+            }
+          ]
+        }
+      ]
+    });
+    logger.info(`App home with id:${result['view']['id']} opened.`);
+  }
+  catch (error) {
+    logger.error(error);
+  }
+});
+
+app.action('report_an_issue', async ({ body, client, ack, logger }) => {
+
+  try {
+    await ack();
+
+    const result = await client.views.open({
+      trigger_id: body.trigger_id,
+      view: formView
+    });
+    logger.info(`View with id:${result['view']['id']} opened through home.`);
+  }
+  catch (error) {
+    logger.error(error);
+  }
+})
+
 app.shortcut('show_form', async ({ shortcut, ack, client, logger }) => {
 
   try {
@@ -137,7 +200,7 @@ app.shortcut('show_form', async ({ shortcut, ack, client, logger }) => {
       trigger_id: shortcut.trigger_id,
       view: formView
     });
-    logger.info(`View with id:${result['view']['id']} opened.`);
+    logger.info(`View with id:${result['view']['id']} opened using shortcut.`);
   }
   catch (error) {
     logger.error(error);
@@ -153,7 +216,7 @@ app.command('/reportissue', async ({ ack, body, client, logger }) => {
       trigger_id: body.trigger_id,
       view: formView
     });
-    logger.info(`View with id:${result['view']['id']} opened.`);
+    logger.info(`View with id:${result['view']['id']} opened using command.`);
   }
   catch (error) {
     logger.error(error);
