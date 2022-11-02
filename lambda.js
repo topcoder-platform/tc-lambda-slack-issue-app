@@ -132,41 +132,44 @@ app.event('app_home_opened', async ({ event, client, logger }) => {
 
   try {
     const result = await client.views.publish({
-      "type": "home",
-      "blocks": [
-        {
-          "type": "header",
-          "text": {
-            "type": "plain_text",
-            "text": "Issue Reporting Service"
-          }
-        },
-        {
-          "type": "divider"
-        },
-        {
-          "type": "section",
-          "text": {
-            "type": "plain_text",
-            "text": "Issue Reporting Service is an interactive application for reporting bugs, issues or incidents related to Topcoder products and services."
-          }
-        },
-        {
-          "type": "actions",
-          "elements": [
-            {
-              "type": "button",
-              "text": {
-                "type": "plain_text",
-                "text": "Report an Issue"
-              },
-              "value": "report_an_issue",
-              "style": "primary",
-              "action_id": "report_an_issue"
+      user_id: event.user,
+      view: {
+        "type": "home",
+        "blocks": [
+          {
+            "type": "header",
+            "text": {
+              "type": "plain_text",
+              "text": "Issue Reporting Service"
             }
-          ]
-        }
-      ]
+          },
+          {
+            "type": "divider"
+          },
+          {
+            "type": "section",
+            "text": {
+              "type": "plain_text",
+              "text": "Issue Reporting Service is an interactive application for reporting bugs, issues or incidents related to Topcoder products and services."
+            }
+          },
+          {
+            "type": "actions",
+            "elements": [
+              {
+                "type": "button",
+                "text": {
+                  "type": "plain_text",
+                  "text": "Report an Issue"
+                },
+                "value": "report_an_issue",
+                "style": "primary",
+                "action_id": "report_an_issue"
+              }
+            ]
+          }
+        ]
+      }
     });
     logger.info(`App home with id:${result['view']['id']} opened.`);
   }
