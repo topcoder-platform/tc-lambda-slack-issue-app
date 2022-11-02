@@ -137,7 +137,7 @@ app.shortcut('show_form', async ({ shortcut, ack, client, logger }) => {
       trigger_id: shortcut.trigger_id,
       view: formView
     });
-    logger.info(result);
+    logger.info(`View with id:${result['view']['id']} opened.`);
   }
   catch (error) {
     logger.error(error);
@@ -153,7 +153,7 @@ app.command('/reportissue', async ({ ack, body, client, logger }) => {
       trigger_id: body.trigger_id,
       view: formView
     });
-    logger.info(result);
+    logger.info(`View with id:${result['view']['id']} opened.`);
   }
   catch (error) {
     logger.error(error);
@@ -170,6 +170,10 @@ app.view('view_form', async ({ ack, body, view, client, logger }) => {
       "title": {
         "type": "plain_text",
         "text": "Thank You!"
+      },
+      "close": {
+        "type": "plain_text",
+        "text": "Close"
       },
       "blocks": [
         {
