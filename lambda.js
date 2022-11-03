@@ -60,12 +60,12 @@ const formView = {
         "type": "static_select",
         "placeholder": {
           "type": "plain_text",
-          "text": "Select an item",
+          "text": "Select an item"
         },
         "initial_option": {
           "text": {
             "type": "plain_text",
-            "text": "P3",
+            "text": "P3"
           },
           "value": "P3"
         },
@@ -73,9 +73,9 @@ const formView = {
           {
             "text": {
               "type": "plain_text",
-              "text": "P1",
+              "text": "P1"
             },
-            "value": "P1",
+            "value": "P1"
           },
           {
             "text": {
@@ -106,7 +106,7 @@ const formView = {
             "value": "P5"
           }
         ],
-        "action_id": "input_priority",
+        "action_id": "input_priority"
       },
       "label": {
         "type": "plain_text",
@@ -115,15 +115,16 @@ const formView = {
     },
     {
       "type": "input",
-      "block_id": "input_time",
+      "block_id": "input_entity",
       "element": {
-        "type": "datetimepicker",
-        "action_id": "input_time"
+        "type": "url_text_input",
+        "action_id": "input_entity"
       },
       "label": {
         "type": "plain_text",
-        "text": "Time of the incident"
-      }
+        "text": "Entity"
+      },
+      "optional": true
     }
   ]
 }
@@ -232,10 +233,10 @@ app.view('view_form', async ({ ack, body, view, client, logger }) => {
     view: {
       "type": "modal",
       "clear_on_close": true,
-      "callback_id": 'view_submitted',
+      "callback_id": "view_submitted",
       "title": {
         "type": "plain_text",
-        "text": "Thank You!"
+        "text": "Thank You! :pray:"
       },
       "close": {
         "type": "plain_text",
@@ -246,36 +247,33 @@ app.view('view_form', async ({ ack, body, view, client, logger }) => {
           "type": "section",
           "text": {
             "type": "plain_text",
-            "text": "Your submission was successful"
-          },
+            "text": ":+1: Your submission was successful."
+          }
         }
       ]
     }
   };
 
-  const date = new Date(0)
-  date.setUTCSeconds(view['state']['values']['input_time']['input_time'].selected_date_time)
   const payload = {
     message: view['state']['values']['input_title']['input_title'].value,
     description: view['state']['values']['input_desc']['input_desc'].value,
     priority: view['state']['values']['input_priority']['input_priority']['selected_option'].value,
-    details: {
-      reporter: body['user']['name'] || body['user']['username'],
-      incidentDate: date.toUTCString()
-    }
+    user: body['user']['name'] || body['user']['username'],
+    entity: view['state']['values']['input_entity']['input_entity'].value,
+    source: "slack-report"
   }
   logger.info(payload)
   const axios = require('axios')
   try {
     await ack(newView);
 
-    const response = await axios.post('https://api.opsgenie.com/v1/incidents/create', payload,
+    const response = await axios.post('https://api.opsgenie.com/v2/alerts', payload,
       {
         headers: {
           Authorization: `GenieKey ${process.env.GENIE_KEY}`
         }
       })
-    logger.info(response)
+    logger.info(response.data)
   }
   catch (error) {
     if (error instanceof axios.AxiosError && error.response) {
