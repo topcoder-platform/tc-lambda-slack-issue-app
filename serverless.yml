@@ -14,6 +14,7 @@ provider:
   environment:
     SLACK_BOT_TOKEN: ${file(./config/${self:provider.stage}.json):SLACK_BOT_TOKEN}
     SLACK_SIGNING_SECRET: ${file(./config/${self:provider.stage}.json):SLACK_SIGNING_SECRET}
+    GENIE_KEY: ${file(./config/${self:provider.stage}.json):GENIE_KEY}
 
 functions:
   tc-lambda-slack-issue-app:
