@@ -263,7 +263,7 @@ app.view('view_form', async ({ ack, body, view, client, logger }) => {
     source: "slack-report"
   }
   payload.description = payload.description
-    + payload.entity ? "\nEntity : " + payload.entity : ""
+    + (payload.entity ? "\nEntity : " + payload.entity : "")
     + "\nReporting user : " + payload.user
     + "\nTime (UTC) :" + new Date().toUTCString()
   logger.info(payload)
