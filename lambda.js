@@ -256,12 +256,16 @@ app.view('view_form', async ({ ack, body, view, client, logger }) => {
 
   const payload = {
     message: view['state']['values']['input_title']['input_title'].value,
-    description: view['state']['values']['input_desc']['input_desc'].value,
+    description: view['state']['values']['input_desc']['input_desc'].value + "\n",
     priority: view['state']['values']['input_priority']['input_priority']['selected_option'].value,
     user: body['user']['name'] || body['user']['username'],
     entity: view['state']['values']['input_entity']['input_entity'].value,
     source: "slack-report"
   }
+  payload.description = payload.description
+    + payload.entity ? "\nEntity : " + payload.entity : ""
+    + "\nReporting user : " + payload.user
+    + "\nTime (UTC) :" + new Date().toUTCString()
   logger.info(payload)
   const axios = require('axios')
   try {
