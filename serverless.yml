@@ -11,10 +11,12 @@ provider:
   runtime: nodejs16.x
   memorySize: 256
   timeout: 15
-  environment:
-    SLACK_BOT_TOKEN: ${file(./config/${self:provider.stage}.json):SLACK_BOT_TOKEN}
-    SLACK_SIGNING_SECRET: ${file(./config/${self:provider.stage}.json):SLACK_SIGNING_SECRET}
-    GENIE_KEY: ${file(./config/${self:provider.stage}.json):GENIE_KEY}
+
+custom:
+  serverlessSsmFetch:
+    SLACK_BOT_TOKEN: /issue-reporting/slack-bot-token
+    SLACK_SIGNING_SECRET: /issue-reporting/slack-signing-secret
+    GENIE_KEY: /issue-reporting/genie-key
 
 functions:
   tc-lambda-slack-issue-app:
@@ -26,3 +28,6 @@ functions:
           priority: 151
           conditions:
             path: /v5/slack-issue-app/slack/events
+
+plugins:
+  - serverless-ssm-fetch
